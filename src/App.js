@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Main from './components/Main';
+import Navbar from './components/Navbar';
+import CountryList from './components/CountryList';
+import Search from './components/Search';
 
 function App() {
+  const [covidGlobal, setCovidGlobal] = useState([]);
+  const [covidCountries, setCovidCountries] = useState([]);
+ 
+
+  useEffect(() => {
+    const apiURL = `https://api.covid19api.com/summary`;
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(apiURL);
+        setCovidGlobal(response.data.Global);
+        setCovidCountries(response.data.Countries);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      
+      <Search />
+      <Main covidGlobal={covidGlobal} />
+      <CountryList covidCountries={covidCountries} />
     </div>
   );
 }
